@@ -1,10 +1,10 @@
-package com.DataStrand.datastrand_analyzer;
+package com.HelixStream.HelixStreamAPI;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class DatastrandAnalyzerApplicationTests {
+class HelixStreamApiApplicationTests {
 
 	@Test
 	void contextLoads() {
