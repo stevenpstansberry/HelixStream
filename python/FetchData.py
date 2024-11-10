@@ -14,7 +14,6 @@ def fetch_variant_sequences(variant, retmax=20):
         'Gamma': 'P.1',
         'Delta': 'B.1.617.2',
         'Omicron': 'B.1.1.529',
-        # Add more variants and lineages as needed
     }
 
     # Get the lineage code for the variant
