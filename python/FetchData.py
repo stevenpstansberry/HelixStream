@@ -4,7 +4,8 @@ import os
 Entrez.email = "stevenpstansberry@gmail.com"
 
 def fetch_variant_sequences(variant, retmax=1):
-    # Map variant names to Pango lineage codes
+    # Map variant names to Pango lineage codes.
+    # New variants can be added to this dictionary as they are discovered.
     variant_lineage_mapping = {
         'Alpha': 'B.1.1.7',
         'Beta': 'B.1.351',
