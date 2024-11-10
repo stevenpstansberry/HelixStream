@@ -92,20 +92,53 @@ def fetch_variant_sequences(variant, retmax=20):
 def fetch_wuhan_sequence():
     seq_id = 'NC_045512.2'  # Reference sequence ID for the original Wuhan strain
     try:
-        seq_handle = Entrez.efetch(db="nucleotide", id=seq_id, rettype="fasta", retmode="text")
-        sequence_data = seq_handle.read()
-        if sequence_data:
-            # Save the sequence as 'Wuhan.fasta'
+        # Fetch the sequence in GenBank format
+        seq_handle = Entrez.efetch(db="nucleotide", id=seq_id, rettype="gb", retmode="text")
+        seq_record = SeqIO.read(seq_handle, "genbank")
+        seq_handle.close()
+
+        # Initialize collection_date as None
+        collection_date = None
+
+        # Extract collection date from features
+        for feature in seq_record.features:
+            if feature.type == 'source':
+                if 'collection_date' in feature.qualifiers:
+                    collection_date = feature.qualifiers['collection_date'][0]
+                    print(f"Found collection_date: {collection_date}")
+                    break
+                else:
+                    print(f"No 'collection_date' in qualifiers for ID {seq_id}")
+
+        if not collection_date:
+            # Fallback to publication date from Entrez summary
+            summary_handle = Entrez.esummary(db="nucleotide", id=seq_id)
+            summary_record = Entrez.read(summary_handle)
+            summary_handle.close()
+            collection_date = summary_record[0].get('PubDate', 'Unknown')
+            print(f"Using PubDate as collection_date: {collection_date}")
+
+        if collection_date and collection_date != 'Unknown':
+            # Prepare the FASTA-formatted sequence with updated header
+            new_header = f">{seq_record.description} | Date: {collection_date}"
+            sequence_data_with_date = f"{new_header}\n{str(seq_record.seq)}\n"
+
+            # Create a filename using the accession number and collection date
+            sanitized_date = collection_date.replace(' ', '_').replace('/', '-').replace(':', '-')
+            filename = f"{seq_id}_{sanitized_date}.fasta"
+
+            # Save the sequence to the 'Wuhan' directory
             script_dir = os.path.dirname(os.path.abspath(__file__))
             root_dir = os.path.dirname(script_dir)
-            output_dir = os.path.join(root_dir, 'data', 'fasta-sequences')
-            os.makedirs(output_dir, exist_ok=True)
-            file_path = os.path.join(output_dir, 'Wuhan.fasta')
+            variant_dir = os.path.join(root_dir, 'data', 'fasta-sequences', 'Wuhan')
+            os.makedirs(variant_dir, exist_ok=True)
+            file_path = os.path.join(variant_dir, filename)
+
             with open(file_path, 'w') as f:
-                f.write(sequence_data)
+                f.write(sequence_data_with_date)
             print(f"Saved Wuhan reference sequence to {file_path}")
         else:
-            print("Warning: Wuhan sequence data is empty.")
+            print("Warning: Wuhan sequence data is missing date information.")
     except Exception as e:
         print(f"Error fetching Wuhan sequence: {e}")
 
@@ -113,19 +146,16 @@ def fetch_wuhan_sequence():
 # Fetch sequences for specific variants
 print("Fetching sequences for selected SARS-CoV-2 variants...")
 print("-" * 50)
-print("Variant: Alpha")
-fetch_variant_sequences('Alpha', retmax=20)
-print("\nvariant: Beta")
-fetch_variant_sequences('Beta', retmax=20)
-print("\nvariant: Gamma")
-fetch_variant_sequences('Gamma', retmax=20)
-print("\nvariant: Delta")
-fetch_variant_sequences('Delta', retmax=20)
-print("\nvariant: Omicron")
-fetch_variant_sequences('Omicron', retmax=20)
-print ("\n Fetching base Wuhan sequence")
+variants = ['Alpha', 'Beta', 'Gamma', 'Delta', 'Omicron']
+
+for variant in variants:
+    print(f"\nVariant: {variant}")
+    fetch_variant_sequences(variant, retmax=20)
+
+print("\nFetching base Wuhan sequence")
 fetch_wuhan_sequence()
 print("-" * 50)
+print("Done fetching sequences.")
 print("Done fetching sequences.")
 
 
