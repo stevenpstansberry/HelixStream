@@ -38,7 +38,7 @@ def fetch_variant_sequences(variant, retmax=20):
     script_dir = os.path.dirname(os.path.abspath(__file__))
     root_dir = os.path.dirname(script_dir)  # Go up one level
 
-    # Create a directory for the variant
+    # Create a directory for the variants if it doesn't exist
     variant_dir = os.path.join(root_dir, 'data', 'fasta-sequences', variant)
     os.makedirs(variant_dir, exist_ok=True)
 
