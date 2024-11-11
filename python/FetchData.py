@@ -6,7 +6,7 @@ Entrez.email = "stevenpstansberry@gmail.com"
 
 #Todo addd logic to record when last fetched
 
-def fetch_variant_sequences(variant, retmax=20):
+def fetch_variant_sequences(variant, retmax=50):
     from datetime import datetime
 
     # Map variant names to Pango lineage codes, can easily add more
@@ -68,13 +68,21 @@ def fetch_variant_sequences(variant, retmax=20):
                 summary_handle.close()
                 collection_date = summary_record[0].get('PubDate', 'Unknown')
 
+            # Format collection_date to "year-month-day" if it is in "day-month-year"
             if collection_date and collection_date != 'Unknown':
+                try:
+                    # Attempt to parse day-month-year format
+                    formatted_date = datetime.strptime(collection_date, "%d-%m-%Y").strftime("%Y-%m-%d")
+                except ValueError:
+                    # If parsing fails, use the original format
+                    formatted_date = collection_date
+
                 # Prepare the FASTA-formatted sequence with updated header
-                new_header = f">{seq_record.description} | Date: {collection_date}"
+                new_header = f">{seq_record.description} | Date: {formatted_date}"
                 sequence_data_with_date = f"{new_header}\n{str(seq_record.seq)}\n"
 
-                # Create a filename using the accession number and collection date
-                sanitized_date = collection_date.replace(' ', '_').replace('/', '-').replace(':', '-')
+                # Create a filename using the accession number and formatted collection date
+                sanitized_date = formatted_date.replace(' ', '_').replace('/', '-').replace(':', '-')
                 filename = f"{seq_id}_{sanitized_date}.fasta"
                 file_path = os.path.join(variant_dir, filename)
 
@@ -148,11 +156,13 @@ def fetch_wuhan_sequence():
 # Fetch sequences for specific variants
 print("Fetching sequences for selected SARS-CoV-2 variants...")
 print("-" * 50)
-variants = ['Alpha', 'Beta', 'Gamma', 'Delta', 'Omicron']
+# variants = ['Alpha', 'Beta', 'Gamma', 'Delta', 'Omicron']
+variants = ['Omicron']
+
 
 for variant in variants:
     print(f"\nVariant: {variant}")
-    fetch_variant_sequences(variant, retmax=20)
+    fetch_variant_sequences(variant, retmax=50)
 
 print("\nFetching base Wuhan sequence")
 fetch_wuhan_sequence()
