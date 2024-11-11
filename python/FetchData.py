@@ -1,14 +1,14 @@
 from Bio import Entrez, SeqIO
 import os
 import time
+from datetime import datetime
+
 
 Entrez.email = "stevenpstansberry@gmail.com"
 
 #Todo addd logic to record when last fetched
 
 def fetch_variant_sequences(variant, retmax=50):
-    from datetime import datetime
-
     # Map variant names to Pango lineage codes, can easily add more
     variant_lineage_mapping = {
         'Alpha': 'B.1.1.7',
@@ -68,15 +68,19 @@ def fetch_variant_sequences(variant, retmax=50):
                 summary_handle.close()
                 collection_date = summary_record[0].get('PubDate', 'Unknown')
 
-            # Format collection_date to "year-month-day" if it is in "day-month-year"
-            if collection_date and collection_date != 'Unknown':
-                try:
-                    # Attempt to parse day-month-year format
-                    formatted_date = datetime.strptime(collection_date, "%d-%m-%Y").strftime("%Y-%m-%d")
-                except ValueError:
-                    # If parsing fails, use the original format
-                    formatted_date = collection_date
+            # Function to parse various date formats
+            def parse_date(date_str):
+                for fmt in ("%d-%m-%Y", "%Y-%m-%d", "%d-%b-%Y", "%Y-%m"):  # Try multiple formats
+                    try:
+                        return datetime.strptime(date_str, fmt).strftime("%Y-%m-%d")
+                    except ValueError:
+                        continue
+                return date_str  # If no format matches, return original
 
+            # Format collection_date to "year-month-day"
+            formatted_date = parse_date(collection_date)
+
+            if formatted_date and formatted_date != 'Unknown':
                 # Prepare the FASTA-formatted sequence with updated header
                 new_header = f">{seq_record.description} | Date: {formatted_date}"
                 sequence_data_with_date = f"{new_header}\n{str(seq_record.seq)}\n"
