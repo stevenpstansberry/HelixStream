@@ -4,10 +4,12 @@ import time
 
 Entrez.email = "stevenpstansberry@gmail.com"
 
+#Todo addd logic to record when last fetched
+
 def fetch_variant_sequences(variant, retmax=20):
     from datetime import datetime
 
-    # Map variant names to Pango lineage codes
+    # Map variant names to Pango lineage codes, can easily add more
     variant_lineage_mapping = {
         'Alpha': 'B.1.1.7',
         'Beta': 'B.1.351',
@@ -36,7 +38,7 @@ def fetch_variant_sequences(variant, retmax=20):
     script_dir = os.path.dirname(os.path.abspath(__file__))
     root_dir = os.path.dirname(script_dir)  # Go up one level
 
-    # Create a directory for the variant
+    # Create a directory for the variants if it doesn't exist
     variant_dir = os.path.join(root_dir, 'data', 'fasta-sequences', variant)
     os.makedirs(variant_dir, exist_ok=True)
 
@@ -58,6 +60,7 @@ def fetch_variant_sequences(variant, retmax=20):
                         collection_date = feature.qualifiers['collection_date'][0]
                         break  # Exit loop after finding the date
 
+            # Handle no collection date found in features
             if not collection_date:
                 # Fallback to publication date from Entrez summary
                 summary_handle = Entrez.esummary(db="nucleotide", id=seq_id)
