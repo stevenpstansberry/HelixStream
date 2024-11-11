@@ -7,7 +7,7 @@ Entrez.email = "stevenpstansberry@gmail.com"
 def fetch_variant_sequences(variant, retmax=20):
     from datetime import datetime
 
-    # Map variant names to Pango lineage codes
+    # Map variant names to Pango lineage codes, can easily add more
     variant_lineage_mapping = {
         'Alpha': 'B.1.1.7',
         'Beta': 'B.1.351',
