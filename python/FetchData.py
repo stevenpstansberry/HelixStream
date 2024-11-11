@@ -60,6 +60,7 @@ def fetch_variant_sequences(variant, retmax=20):
                         collection_date = feature.qualifiers['collection_date'][0]
                         break  # Exit loop after finding the date
 
+            # Handle no collection date found in features
             if not collection_date:
                 # Fallback to publication date from Entrez summary
                 summary_handle = Entrez.esummary(db="nucleotide", id=seq_id)
