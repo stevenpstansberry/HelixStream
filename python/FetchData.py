@@ -4,6 +4,8 @@ import time
 
 Entrez.email = "stevenpstansberry@gmail.com"
 
+#Todo addd logic to record when last fetched
+
 def fetch_variant_sequences(variant, retmax=20):
     from datetime import datetime
 
