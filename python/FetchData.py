@@ -137,9 +137,8 @@ def fetch_wuhan_sequence():
             new_header = f">{seq_record.description} | Date: {collection_date}"
             sequence_data_with_date = f"{new_header}\n{str(seq_record.seq)}\n"
 
-            # Create a filename using the accession number and collection date
-            sanitized_date = collection_date.replace(' ', '_').replace('/', '-').replace(':', '-')
-            filename = f"{seq_id}_{sanitized_date}.fasta"
+            # Create a file for the Wuhan reference sequence
+            filename = f"original_wuhan_strain.fasta"
 
             # Save the sequence to the 'Wuhan' directory
             script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -164,9 +163,9 @@ print("-" * 50)
 variants = ['Omicron']
 
 
-for variant in variants:
-    print(f"\nVariant: {variant}")
-    fetch_variant_sequences(variant, retmax=50)
+# for variant in variants:
+#     print(f"\nVariant: {variant}")
+#     fetch_variant_sequences(variant, retmax=50)
 
 print("\nFetching base Wuhan sequence")
 fetch_wuhan_sequence()
