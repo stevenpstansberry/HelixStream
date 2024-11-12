@@ -5,3 +5,4 @@ sequences.txt
 data/fasta-sequences/*
 sequences.fasta
 data/aligned-sequences/*
+python/__pycache__/*
