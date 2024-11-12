@@ -6,3 +6,4 @@ data/fasta-sequences/*
 sequences.fasta
 data/aligned-sequences/*
 python/__pycache__/*
+data/aggregated-sequences/*

@@ -71,6 +71,20 @@ def extract_custom_id(header):
         return header[start:end].strip()
     return header  # Fallback to entire header if pattern not found
 
+def save_aggregated_sequences(variant, records):
+    output_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'aggregated-sequences')
+    os.makedirs(output_dir, exist_ok=True)
+    output_file = os.path.join(output_dir, f"{variant}-aggregated-sequences.fasta")
+
+    with open(output_file, 'w') as f:
+        for record in records:
+            date_str = record.description.split("| Date: ")[1].strip() if "| Date: " in record.description else "Unknown"
+            record_id = record.id.replace(" ", "/")
+            f.write(f">{record_id}###{date_str}\n")
+            f.write(f"{record.seq}\n")
+
+    print(f"Aggregated sequences saved to {output_file}")
+
 def main(variant):
     print(f"Starting analysis for variant: {variant}")
     
@@ -80,6 +94,7 @@ def main(variant):
     all_records = [wuhan_record] + [entry['record'] for entry in variant_sequences]
 
     print("Sequences have been read and are ready for alignment in another file.")
+    save_aggregated_sequences(variant, all_records)
     return all_records
 
 if __name__ == "__main__":
