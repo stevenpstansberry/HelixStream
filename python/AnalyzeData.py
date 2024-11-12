@@ -4,6 +4,8 @@ import numpy as np
 from datetime import datetime
 import os
 
+NUM_SITES = 29903 # Total number of nucleotides in the original Wuhan COVID 2019 reference genome
+
 def calculate_evolutionary_metrics():
     # Define the path to the alignment file
     alignment_file = os.path.join("..", "data", "aligned-sequences", "aligned.txt")
@@ -80,8 +82,13 @@ def jukes_cantor(substitutions, total_sites):
 
 # Usage
 df = calculate_evolutionary_metrics()
-total_sites = 29903 
+total_sites = NUM_SITES 
 df = calculate_jukes_cantor_distance(df, total_sites)
 
+
 # Display the DataFrame with the new Jukes-Cantor distance column
-print(df[['Date', 'Sequence_ID', 'Substitutions', 'Jukes_Cantor_Distance']])
+pd.set_option('display.max_columns', None)
+
+print("DataFrame with Jukes-Cantor distance:")
+print("-" * 100)
+print(df)
