@@ -1,7 +1,10 @@
 from Bio import AlignIO
 import pandas as pd
+import numpy as np
 from datetime import datetime
 import os
+
+NUM_SITES = 29903 # Total number of nucleotides in the original Wuhan COVID 2019 reference genome
 
 def calculate_evolutionary_metrics():
     # Define the path to the alignment file
@@ -23,7 +26,7 @@ def calculate_evolutionary_metrics():
         sequence_id = record.id
         print("Processing Sequence ID:", record.id)  # Check each ID
 
-        # Extract the date from the sequence ID, assuming the format is ID###YYYY-MM-DD
+        # Extract the date from the sequence ID
         sequence_date = record.id.split("###")[-1]  
         sequence_date = datetime.strptime(sequence_date, "%Y-%m-%d")
 
@@ -55,8 +58,37 @@ def calculate_evolutionary_metrics():
     df = pd.DataFrame(data).sort_values("Date").reset_index(drop=True) 
     return df
 
+
+def calculate_jukes_cantor_distance(df, total_sites):
+    # Calculate the Jukes-Cantor distance for each sequence
+    df['Jukes_Cantor_Distance'] = df['Substitutions'].apply(lambda x: jukes_cantor(x, total_sites))
+    return df
+
+def jukes_cantor(substitutions, total_sites):
+    # Proportion of substitutions (p)
+    p = substitutions / total_sites
+    
+    # Check if p exceeds theoretical limit for Jukes-Cantor
+    if p >= 0.75:
+        return np.inf  # Beyond model's accuracy range, assume infinite distance
+    
+    # Apply Jukes-Cantor formula
+    try:
+        d = -(3/4) * np.log(1 - (4/3) * p)
+    except ValueError:
+        d = np.nan  # Handle cases where log input might be out of range
+    
+    return d
+
 # Usage
 df = calculate_evolutionary_metrics()
+total_sites = NUM_SITES 
+df = calculate_jukes_cantor_distance(df, total_sites)
 
-# Display the data
-print(df.head())
+
+# Display the DataFrame with the new Jukes-Cantor distance column
+pd.set_option('display.max_columns', None)
+
+print("DataFrame with Jukes-Cantor distance:")
+print("-" * 100)
+print(df)
