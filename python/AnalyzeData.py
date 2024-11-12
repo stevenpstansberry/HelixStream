@@ -92,3 +92,8 @@ pd.set_option('display.max_columns', None)
 print("DataFrame with Jukes-Cantor distance:")
 print("-" * 100)
 print(df)
+
+# Print the DataFrame in JSON format
+print("DataFrame in JSON format:")
+print("-" * 100)
+print(df.to_json(orient='records', date_format='iso'))
