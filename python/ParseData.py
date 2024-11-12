@@ -1,9 +1,7 @@
-# ParseData.py
-
-from Bio import SeqIO, Align
-from Bio.Align import substitution_matrices
 import os
 from datetime import datetime
+from Bio import SeqIO, Align
+from Bio.Align import substitution_matrices
 
 def read_wuhan_sequence():
     print("Reading Wuhan reference sequence...")
@@ -62,40 +60,63 @@ def parse_date(date_str):
     return None
 
 def align_sequences(wuhan_seq, variant_seq):
+    print("Initializing aligner...")
     aligner = Align.PairwiseAligner()
     aligner.mode = 'global'
     aligner.substitution_matrix = substitution_matrices.load("NUC.4.4")
+    
+    # Set gap penalties
+    aligner.open_gap_score = -10
+    aligner.extend_gap_score = -0.5
+    
+    # Set end gap penalties to zero
+    aligner.end_open_gap_score = 0
+    aligner.end_extend_gap_score = 0
+    
+    print("Performing alignment...")
     alignments = aligner.align(wuhan_seq, variant_seq)
     
     # Get the best alignment
-    aligned_wuhan_seq, aligned_variant_seq = alignments[0].aligned[0], alignments[0].aligned[1]
-    aligned_wuhan = []
-    aligned_variant = []
-    wuhan_index = 0
-    variant_index = 0
+    alignment = alignments[0]
     
-    for (start_wuhan, end_wuhan), (start_variant, end_variant) in zip(aligned_wuhan_seq, aligned_variant_seq):
-        # Add gaps where needed
-        while wuhan_index < start_wuhan:
-            aligned_wuhan.append(wuhan_seq[wuhan_index])
-            aligned_variant.append('-')
-            wuhan_index += 1
-        while variant_index < start_variant:
-            aligned_wuhan.append('-')
-            aligned_variant.append(variant_seq[variant_index])
-            variant_index += 1
-        # Add aligned segment
-        while wuhan_index < end_wuhan:
-            aligned_wuhan.append(wuhan_seq[wuhan_index])
-            aligned_variant.append(variant_seq[variant_index])
-            wuhan_index += 1
-            variant_index += 1
-    
-    aligned_wuhan.extend(wuhan_seq[wuhan_index:])
-    aligned_variant.extend(variant_seq[variant_index:])
+    # Extract the aligned sequences with gaps
+    aligned_wuhan = alignment.target
+    aligned_variant = alignment.query
     
     print("Alignment complete.")
-    return ''.join(aligned_wuhan), ''.join(aligned_variant)
+    print(f"Aligned variant sequence is of length: {len(aligned_variant)}")
+    print(f"Aligned Wuhan sequence is of length: {len(aligned_wuhan)}")
+    return str(aligned_wuhan), str(aligned_variant)
+
+def extract_custom_id(header):
+    # Extracts the portion after "SARS-CoV-2/" up to the first comma
+    if "SARS-CoV-2/" in header:
+        start = header.find("SARS-CoV-2/") + len("SARS-CoV-2/")
+        end = header.find(",", start)
+        return header[start:end].strip()
+    return header  # Fallback to entire header if pattern not found
+
+def save_aligned_sequences(variant, aligned_sequences, aligned_wuhan):
+    output_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'aligned-sequences')
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Save all aligned variant sequences to a single file
+    variant_file_path = os.path.join(output_dir, f"{variant}_aligned_sequences.fasta")
+    with open(variant_file_path, 'w') as f:
+        for entry in aligned_sequences:
+            f.write(f">Aligned Variant ID: {entry['custom_id']} | Date: {entry['date']}\n")
+            f.write(entry['aligned_variant'] + "\n")
+            f.write("#" * 80 + "\n")  # Delimiter between sequences
+
+    print(f"Aligned variant sequences saved to {variant_file_path}")
+
+    # Save the aligned Wuhan sequence separately
+    wuhan_file_path = os.path.join(output_dir, 'Wuhan_aligned_sequence.fasta')
+    with open(wuhan_file_path, 'w') as f:
+        f.write(">Aligned Wuhan Reference Sequence\n")
+        f.write(aligned_wuhan + "\n")
+
+    print(f"Aligned Wuhan sequence saved to {wuhan_file_path}")
 
 def main(variant):
     print(f"Starting analysis for variant: {variant}")
@@ -109,24 +130,28 @@ def main(variant):
     print("-" * 100)
     
     aligned_sequences = []
+    aligned_wuhan = None  # To store the aligned Wuhan reference sequence once
     for i, entry in enumerate(variant_sequences, start=1):
         variant_record = entry['record']
         collection_date = entry['date']
-        print(f"Aligning sequence {i}/{len(variant_sequences)} from {collection_date} - ID: {variant_record.name}")
+        custom_id = extract_custom_id(variant_record.description)
+        print(f"Aligning sequence {i}/{len(variant_sequences)} from {collection_date} - ID: {custom_id}")
         
         variant_seq = str(variant_record.seq).upper()
         aligned_wuhan, aligned_variant = align_sequences(wuhan_seq, variant_seq)
         
         aligned_sequences.append({
             'date': collection_date,
-            'aligned_wuhan': aligned_wuhan,
             'aligned_variant': aligned_variant,
+            'custom_id': custom_id,
         })
         
-        print(f"Completed alignment for sequence {i}/{len(variant_sequences)} - ID: {variant_record.id}")
+        print(f"Completed alignment for sequence {i}/{len(variant_sequences)} - ID: {custom_id}")
 
-    print("All sequences aligned successfully.")
-    # The aligned sequences can now be saved or passed to another function for further analysis
+    # Save aligned sequences
+    save_aligned_sequences(variant, aligned_sequences, aligned_wuhan)
+
+    print("All sequences aligned and saved successfully.")
 
 if __name__ == "__main__":
     import sys

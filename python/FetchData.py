@@ -163,14 +163,13 @@ print("-" * 50)
 variants = ['Omicron']
 
 
-# for variant in variants:
-#     print(f"\nVariant: {variant}")
-#     fetch_variant_sequences(variant, retmax=50)
+for variant in variants:
+    print(f"\nVariant: {variant}")
+    fetch_variant_sequences(variant, retmax=5)
 
 print("\nFetching base Wuhan sequence")
 fetch_wuhan_sequence()
 print("-" * 50)
-print("Done fetching sequences.")
 print("Done fetching sequences.")
 
 
