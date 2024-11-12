@@ -21,6 +21,8 @@ def calculate_evolutionary_metrics():
 
     for record in alignment:
         sequence_id = record.id
+        print("Processing Sequence ID:", record.id)  # Check each ID
+
         # Extract the date from the sequence ID, assuming the format is ID###YYYY-MM-DD
         sequence_date = record.id.split("###")[-1]  
         sequence_date = datetime.strptime(sequence_date, "%Y-%m-%d")
