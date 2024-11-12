@@ -10,6 +10,9 @@ def read_wuhan_sequence():
             wuhan_path = os.path.join(wuhan_dir, filename)
             print(f"Found Wuhan sequence file: {filename}")
             wuhan_record = SeqIO.read(wuhan_path, 'fasta')
+            # Extract custom_id and assign to record.id
+            wuhan_custom_id = extract_custom_id(wuhan_record.description)
+            wuhan_record.id = wuhan_custom_id
             return wuhan_record
     raise FileNotFoundError("Wuhan sequence not found in directory.")
 
@@ -28,12 +31,14 @@ def read_variant_sequences(variant):
         try:
             record = SeqIO.read(file_path, 'fasta')
             date_str = extract_date_from_header(record.description)
+            custom_id = extract_custom_id(record.description)
+            record.id = custom_id  # Assign custom_id to record.id
             if date_str:
                 collection_date = parse_date(date_str)
                 if collection_date:
                     variant_sequences.append({
                         'record': record,
-                        'date': collection_date
+                        'date': collection_date,
                     })
         except ValueError:
             print(f"Warning: No valid sequence found in file {filename}. Skipping.")
