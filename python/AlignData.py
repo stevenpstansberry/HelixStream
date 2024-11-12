@@ -1,14 +1,22 @@
-# AnalyzeData.py
+# AlignData.py
 from ParseData import main
+from Bio import Align
 
-def analyze_sequences():
+def align_sequences():
     variant_name = 'Omicron'  
     sequences = main(variant_name)
     
-    for idx, record in enumerate(sequences, start=1):
+    for idx, record in enumerate(sequences, start=1): # start at 1 to skip over the Wuhan sequence
         print(f"Sequence {idx}: {record.id}")
-        print(f"Length: {len(record.seq)}")
-        print(f"Sequence:\n{record.seq}\n")
+        #print(f"Length: {len(record.seq)}")
+        #print(f"Sequence:\n{record.seq}\n")
+
+    aligner = Align.PairwiseAligner()
+    wuhanSequence = sequences[0].seq
+    seq1 = sequences[1].seq
+
+
+
 
 if __name__ == "__main__":
-    analyze_sequences()
+    align_sequences()
