@@ -1,14 +1,14 @@
 from Bio import Entrez, SeqIO
 import os
 import time
+from datetime import datetime
+
 
 Entrez.email = "stevenpstansberry@gmail.com"
 
 #Todo addd logic to record when last fetched
 
-def fetch_variant_sequences(variant, retmax=20):
-    from datetime import datetime
-
+def fetch_variant_sequences(variant, retmax=50):
     # Map variant names to Pango lineage codes, can easily add more
     variant_lineage_mapping = {
         'Alpha': 'B.1.1.7',
@@ -68,13 +68,25 @@ def fetch_variant_sequences(variant, retmax=20):
                 summary_handle.close()
                 collection_date = summary_record[0].get('PubDate', 'Unknown')
 
-            if collection_date and collection_date != 'Unknown':
+            # Function to parse various date formats
+            def parse_date(date_str):
+                for fmt in ("%d-%m-%Y", "%Y-%m-%d", "%d-%b-%Y", "%Y-%m"):  # Try multiple formats
+                    try:
+                        return datetime.strptime(date_str, fmt).strftime("%Y-%m-%d")
+                    except ValueError:
+                        continue
+                return date_str  # If no format matches, return original
+
+            # Format collection_date to "year-month-day"
+            formatted_date = parse_date(collection_date)
+
+            if formatted_date and formatted_date != 'Unknown':
                 # Prepare the FASTA-formatted sequence with updated header
-                new_header = f">{seq_record.description} | Date: {collection_date}"
+                new_header = f">{seq_record.description} | Date: {formatted_date}"
                 sequence_data_with_date = f"{new_header}\n{str(seq_record.seq)}\n"
 
-                # Create a filename using the accession number and collection date
-                sanitized_date = collection_date.replace(' ', '_').replace('/', '-').replace(':', '-')
+                # Create a filename using the accession number and formatted collection date
+                sanitized_date = formatted_date.replace(' ', '_').replace('/', '-').replace(':', '-')
                 filename = f"{seq_id}_{sanitized_date}.fasta"
                 file_path = os.path.join(variant_dir, filename)
 
@@ -125,9 +137,8 @@ def fetch_wuhan_sequence():
             new_header = f">{seq_record.description} | Date: {collection_date}"
             sequence_data_with_date = f"{new_header}\n{str(seq_record.seq)}\n"
 
-            # Create a filename using the accession number and collection date
-            sanitized_date = collection_date.replace(' ', '_').replace('/', '-').replace(':', '-')
-            filename = f"{seq_id}_{sanitized_date}.fasta"
+            # Create a file for the Wuhan reference sequence
+            filename = f"original_wuhan_strain.fasta"
 
             # Save the sequence to the 'Wuhan' directory
             script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -148,16 +159,17 @@ def fetch_wuhan_sequence():
 # Fetch sequences for specific variants
 print("Fetching sequences for selected SARS-CoV-2 variants...")
 print("-" * 50)
-variants = ['Alpha', 'Beta', 'Gamma', 'Delta', 'Omicron']
+# variants = ['Alpha', 'Beta', 'Gamma', 'Delta', 'Omicron']
+variants = ['Omicron']
+
 
 for variant in variants:
     print(f"\nVariant: {variant}")
-    fetch_variant_sequences(variant, retmax=20)
+    fetch_variant_sequences(variant, retmax=5)
 
 print("\nFetching base Wuhan sequence")
 fetch_wuhan_sequence()
 print("-" * 50)
-print("Done fetching sequences.")
 print("Done fetching sequences.")
 
 
