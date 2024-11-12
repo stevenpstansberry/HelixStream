@@ -11,8 +11,9 @@ def read_wuhan_sequence():
             print(f"Found Wuhan sequence file: {filename}")
             wuhan_record = SeqIO.read(wuhan_path, 'fasta')
             # Extract custom_id and assign to record.id
-            wuhan_custom_id = extract_custom_id(wuhan_record.description)
-            wuhan_record.id = wuhan_custom_id
+            wuhan_record.id = "Severe/acute/respiratory/syndrome/coronavirus/2/isolate/Wuhan/Hu/1,/complete/genome"
+            wuhan_record.description = "Severe/acute/respiratory/syndrome/coronavirus/2/isolate/Wuhan/Hu/1,/complete/genome| Date: 2019-12-29"
+            print(f"Wuhan sequence ID: {wuhan_record.id}")
             return wuhan_record
     raise FileNotFoundError("Wuhan sequence not found in directory.")
 
