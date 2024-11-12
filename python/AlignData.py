@@ -2,6 +2,8 @@
 from ParseData import main
 from Bio import Align
 
+#TODO use unix scripts to align sequences in ec2
+
 def align_sequences():
     variant_name = 'Omicron'  
     sequences = main(variant_name)
