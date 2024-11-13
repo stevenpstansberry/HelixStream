@@ -1,7 +1,7 @@
 "use client";
 
 import { useTheme } from "next-themes";
-import { Dna, Activity, GitBranch, Microscope, Info, AlertCircle } from "lucide-react";
+import { Dna, Activity, GitBranch, Microscope, Info, AlertCircle, Github, Linkedin } from "lucide-react"; // import icons
 import { Header } from "@/components/Header";
 import { InfoCard } from "@/components/InfoCard";
 import { StatisticCard } from "@/components/StatisticCard";
@@ -141,8 +141,16 @@ export default function Dashboard() {
 
           {/* Key Insights */}
           <KeyInsights />
-
         </div>
+        {/* Footer with social icons */}
+        <footer className={`flex justify-center items-center py-4 border-t ${theme === 'dark' ? 'border-gray-600' : 'border-gray-300'}`}>
+          <a href="https://github.com/stevenpstansberry" target="_blank" rel="noopener noreferrer" className="mx-4 group">
+            <Github className="h-6 w-6 text-gray-600 group-hover:text-purple-500 group-hover:drop-shadow-[0_0_5px_rgba(128,0,128,0.75)] transition-all duration-300" />
+          </a>
+          <a href="https://linkedin.com/in/stevenpstansberry" target="_blank" rel="noopener noreferrer" className="mx-4 group">
+            <Linkedin className="h-6 w-6 stroke-gray-600 fill-none group-hover:fill-purple-500 group-hover:drop-shadow-[0_0_5px_rgba(128,0,128,0.75)] transition-all duration-300" />
+          </a>
+        </footer>
       </div>
     </TooltipProvider>  
   );
