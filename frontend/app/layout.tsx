@@ -6,7 +6,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Bioinformatics Dashboard',
+  title: 'Pipeline Demo Dashboard',
   description: 'Advanced sequence analysis dashboard with real-time data visualization',
 };
 
