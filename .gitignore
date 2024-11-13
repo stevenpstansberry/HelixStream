@@ -7,3 +7,4 @@ sequences.fasta
 data/aligned-sequences/*
 python/__pycache__/*
 data/aggregated-sequences/*
+frontend/node_modules/*
