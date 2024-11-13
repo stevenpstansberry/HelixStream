@@ -111,7 +111,7 @@ export default function Dashboard() {
               title="Sequence Identity"
               tooltip="Shows similarity to reference genome. Lower values indicate greater divergence from the original SARS-CoV-2 strain."
               value={`${latestData.Percent_Identity.toFixed(2)}%`}
-              subtitle="vs. Reference Genome"
+              subtitle="vs. original SARS-CoV-2 Genome"
             />
             <StatisticCard
               icon={<GitBranch className="h-5 w-5 text-purple-500" />}
