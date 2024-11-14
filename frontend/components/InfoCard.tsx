@@ -36,9 +36,10 @@ export function InfoCard() {
         <div>
           <p className="text-muted-foreground">
           This dashboard demonstrates a usecase for the HelixStream bioinformatics pipeline, designed to track the genetic evolution of SARS-CoV-2 variants over time. 
-          Leveraging data from the NCBI database, the pipeline queues, ingests, and processes genome sequences across all known COVID-19 variants, 
+          Leveraging data from the NCBI database, the pipeline queues, ingests, and processes genome sequences across several prominent COVID-19 variants, 
           providing insights into mutation patterns and evolutionary trends. Key metrics highlight mutation rates and differences from reference genomes, 
           offering researchers valuable information on how these variants evolve and diverge.
+          The pipleline will automatically update with new data as it becomes available and process it, ensuring that the most recent information is always accessible.
           </p>
           {lastUpdated && (
             <p className="text-sm text-gray-500 mt-4">
