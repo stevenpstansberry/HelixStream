@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useTheme } from "next-themes";
 import { Dna, Activity, GitBranch, Microscope, Info, AlertCircle, Github, Linkedin } from "lucide-react"; // import icons
 import { Header } from "@/components/Header";
@@ -15,69 +16,30 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-const data = [
-  {
-    Date: "2024-01-01",
-    Percent_Identity: 98.03,
-    Total_Mutations: 600,
-    Mutation_Density_per_kb: 19.66,
-    Jukes_Cantor_Distance: 0.0149,
-    Substitutions: 440,
-    Insertions: 148,
-    Deletions: 12
-  },
-  {
-    Date: "2024-01-15",
-    Percent_Identity: 97.89,
-    Total_Mutations: 620,
-    Mutation_Density_per_kb: 20.12,
-    Jukes_Cantor_Distance: 0.0156,
-    Substitutions: 455,
-    Insertions: 152,
-    Deletions: 13
-  },
-  {
-    Date: "2024-02-01",
-    Percent_Identity: 97.76,
-    Total_Mutations: 642,
-    Mutation_Density_per_kb: 20.65,
-    Jukes_Cantor_Distance: 0.0164,
-    Substitutions: 470,
-    Insertions: 157,
-    Deletions: 15
-  },
-  {
-    Date: "2024-02-15",
-    Percent_Identity: 97.62,
-    Total_Mutations: 665,
-    Mutation_Density_per_kb: 21.23,
-    Jukes_Cantor_Distance: 0.0173,
-    Substitutions: 486,
-    Insertions: 162,
-    Deletions: 17
-  },
-  {
-    Date: "2024-03-01",
-    Percent_Identity: 97.45,
-    Total_Mutations: 690,
-    Mutation_Density_per_kb: 21.88,
-    Jukes_Cantor_Distance: 0.0183,
-    Substitutions: 504,
-    Insertions: 168,
-    Deletions: 18
-  }
-];
+import { alphaData, betaData, gammaData, deltaData, omicronData, alphaMutationTypeData, betaMutationTypeData, gammaMutationTypeData, deltaMutationTypeData, omicronMutationTypeData } from "@/data/data";
 
-const mutationTypeData = [
-  { name: 'Substitutions', value: 504 },
-  { name: 'Insertions', value: 168 },
-  { name: 'Deletions', value: 18 }
-];
 
-const COLORS = ['hsl(var(--chart-2))', 'hsl(var(--chart-3))', 'hsl(var(--chart-4))'];
+const variantOptions = {
+  Alpha: alphaData,
+  Beta: betaData,
+  Gamma: gammaData,
+  Delta: deltaData,
+  Omicron: omicronData
+};
+
+const mutationTypeVariantOptions = {
+  Alpha: alphaMutationTypeData,
+  Beta: betaMutationTypeData,
+  Gamma: gammaMutationTypeData,
+  Delta: deltaMutationTypeData,
+  Omicron: omicronMutationTypeData
+};
 
 export default function Dashboard() {
   const { theme } = useTheme();
+  const [selectedVariant, setSelectedVariant] = useState("Omicron");
+  const [variantData, setVariantData] = useState(variantOptions["Omicron"]);
+  const [mutationTypeData, setMutationTypeData] = useState(omicronMutationTypeData);
   const chartTheme = theme === 'dark' ? {
     backgroundColor: 'transparent',
     textColor: '#ffffff',
@@ -87,12 +49,20 @@ export default function Dashboard() {
     textColor: '#000000',
     gridColor: '#e5e5e5'
   };
+
+  const handleVariantChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selected = event.target.value;
+    setSelectedVariant(selected);
+    setVariantData(variantOptions[selected as keyof typeof variantOptions]);
+    setMutationTypeData(mutationTypeVariantOptions[selected as keyof typeof mutationTypeVariantOptions]);
+  };
+
   
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString();
   };
 
-  const latestData = data[data.length - 1];
+  const latestData = variantData[variantData.length - 1];
 
   return (
     <TooltipProvider>
@@ -100,6 +70,26 @@ export default function Dashboard() {
         <div className="mx-auto max-w-7xl p-6">
           {/* Header */}
           <Header/>
+
+
+          {/* Variant Selection Dropdown */}
+          <div className="mb-6">
+            <label htmlFor="variantSelect" className="block text-sm font-medium text-gray-700">
+              Select Variant:
+            </label>
+            <select
+              id="variantSelect"
+              value={selectedVariant}
+              onChange={handleVariantChange}
+              className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            >
+              {Object.keys(variantOptions).map(variant => (
+                <option key={variant} value={variant}>
+                  {variant}
+                </option>
+              ))}
+            </select>
+          </div>
 
           {/* Info Card */}
           <InfoCard/>
@@ -137,7 +127,7 @@ export default function Dashboard() {
           </div>
 
           {/* Chart Tabs */}
-          <ChartTabs/>
+          <ChartTabs data={variantData} mutationTypeData={mutationTypeData}/>
 
           {/* Key Insights */}
           <KeyInsights />
