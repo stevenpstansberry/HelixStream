@@ -130,7 +130,7 @@ export default function Dashboard() {
           <ChartTabs data={variantData} mutationTypeData={mutationTypeData}/>
 
           {/* Key Insights */}
-          <KeyInsights />
+          <KeyInsights data={variantData}/>
         </div>
         {/* Footer with social icons */}
         <footer className={`flex justify-center items-center py-4 border-t ${theme === 'dark' ? 'border-gray-600' : 'border-gray-300'}`}>

@@ -3,59 +3,22 @@
 import { Card } from "@/components/ui/card";
 import { AlertCircle } from "lucide-react";
 
-export function KeyInsights() {
-    const data = [
-        {
-          Date: "2024-01-01",
-          Percent_Identity: 98.03,
-          Total_Mutations: 600,
-          Mutation_Density_per_kb: 19.66,
-          Jukes_Cantor_Distance: 0.0149,
-          Substitutions: 440,
-          Insertions: 148,
-          Deletions: 12
-        },
-        {
-          Date: "2024-01-15",
-          Percent_Identity: 97.89,
-          Total_Mutations: 620,
-          Mutation_Density_per_kb: 20.12,
-          Jukes_Cantor_Distance: 0.0156,
-          Substitutions: 455,
-          Insertions: 152,
-          Deletions: 13
-        },
-        {
-          Date: "2024-02-01",
-          Percent_Identity: 97.76,
-          Total_Mutations: 642,
-          Mutation_Density_per_kb: 20.65,
-          Jukes_Cantor_Distance: 0.0164,
-          Substitutions: 470,
-          Insertions: 157,
-          Deletions: 15
-        },
-        {
-          Date: "2024-02-15",
-          Percent_Identity: 97.62,
-          Total_Mutations: 665,
-          Mutation_Density_per_kb: 21.23,
-          Jukes_Cantor_Distance: 0.0173,
-          Substitutions: 486,
-          Insertions: 162,
-          Deletions: 17
-        },
-        {
-          Date: "2024-03-01",
-          Percent_Identity: 97.45,
-          Total_Mutations: 690,
-          Mutation_Density_per_kb: 21.88,
-          Jukes_Cantor_Distance: 0.0183,
-          Substitutions: 504,
-          Insertions: 168,
-          Deletions: 18
-        }
-      ];
+type DataType = {
+  Date: string;
+  Percent_Identity: number;
+  Total_Mutations: number;
+  Mutation_Density_per_kb: number;
+  Jukes_Cantor_Distance: number;
+  Substitutions: number;
+  Insertions: number;
+  Deletions: number;
+};
+
+type KeyInsightsProps = {
+  data: DataType[];
+};
+
+export function KeyInsights({ data }: KeyInsightsProps) {
     
       const latestData = data[data.length - 1];
 
