@@ -137,7 +137,7 @@ export default function Dashboard() {
           <a href="https://github.com/stevenpstansberry" target="_blank" rel="noopener noreferrer" className="mx-4 group">
             <Github className="h-6 w-6 text-gray-600 group-hover:text-purple-500 group-hover:drop-shadow-[0_0_5px_rgba(128,0,128,0.75)] transition-all duration-300" />
           </a>
-          <a href="https://linkedin.com/in/stevenpstansberry" target="_blank" rel="noopener noreferrer" className="mx-4 group">
+          <a href="https://linkedin.com/in/steven-stansberry" target="_blank" rel="noopener noreferrer" className="mx-4 group">
             <Linkedin className="h-6 w-6 stroke-gray-600 fill-none group-hover:fill-purple-500 group-hover:drop-shadow-[0_0_5px_rgba(128,0,128,0.75)] transition-all duration-300" />
           </a>
         </footer>

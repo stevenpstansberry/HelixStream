@@ -35,9 +35,10 @@ export function InfoCard() {
         <Info className="h-5 w-5 text-blue-500 mt-1 flex-shrink-0" />
         <div>
           <p className="text-muted-foreground">
-            This dashboard visualizes bioinformatics data processed through our custom pipeline designed to track the genetic evolution of SARS-CoV-2. 
-            Focusing on mutations in the Omicron variant, we compare sequence changes over time to identify key differences and evolutionary trends. 
-            The metrics displayed help researchers monitor how Omicron diverges from reference genomes, providing insights into mutation rates and potential functional impacts.
+          This dashboard demonstrates a usecase for the HelixStream bioinformatics pipeline, designed to track the genetic evolution of SARS-CoV-2 variants over time. 
+          Leveraging data from the NCBI database, the pipeline queues, ingests, and processes genome sequences across all known COVID-19 variants, 
+          providing insights into mutation patterns and evolutionary trends. Key metrics highlight mutation rates and differences from reference genomes, 
+          offering researchers valuable information on how these variants evolve and diverge.
           </p>
           {lastUpdated && (
             <p className="text-sm text-gray-500 mt-4">
