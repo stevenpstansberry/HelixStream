@@ -132,6 +132,7 @@ def fetch_wuhan_sequence():
             collection_date = summary_record[0].get('PubDate', 'Unknown')
             print(f"Using PubDate as collection_date: {collection_date}")
 
+        # Format collection_date to "year-month-day"
         if collection_date and collection_date != 'Unknown':
             # Prepare the FASTA-formatted sequence with updated header
             new_header = f">{seq_record.description} | Date: {collection_date}"
