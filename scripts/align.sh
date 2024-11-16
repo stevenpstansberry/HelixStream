@@ -24,11 +24,24 @@ fi
 OUTPUT_DIR=$(dirname "$OUTPUT_FILE")
 mkdir -p "$OUTPUT_DIR"
 
+# Inform the user that the alignment process is starting
+echo "Starting alignment process for $INPUT_FILE..."
+echo "This may take a while. Please be patient."
+
 # Run Clustal Omega
-clustalo -i "$INPUT_FILE" -o "$OUTPUT_FILE" --force
+clustalo -i "$INPUT_FILE" -o "$OUTPUT_FILE" --force &
+
+# Get the PID of the Clustal Omega process
+CLUSTALO_PID=$!
+
+# Periodically update the user about the alignment process
+while kill -0 $CLUSTALO_PID 2> /dev/null; do
+  echo "Alignment is still in progress..."
+  sleep 60  # Update every 60 seconds
+done
 
 # Check if the alignment was successful
-if [ $? -eq 0 ]; then
+if wait $CLUSTALO_PID; then
   echo "Alignment successful. Output saved to $OUTPUT_FILE"
 else
   echo "Alignment failed."
