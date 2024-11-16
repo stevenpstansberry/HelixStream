@@ -101,7 +101,7 @@ if __name__ == "__main__":
     print(df)
 
     # Save the DataFrame in JSON format
-    output_dir = os.path.join("..", "data", "analyzed-sequences")
+    output_dir = os.path.join("..", "data", "analyzed-sequences", args.variantName)
     os.makedirs(output_dir, exist_ok=True)
     today_date = datetime.now().strftime("%Y-%m-%d")
     output_file = os.path.join(output_dir, f"analyzed-{args.variantName}-{today_date}.json")
