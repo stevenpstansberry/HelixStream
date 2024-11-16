@@ -18,6 +18,10 @@ aws s3 cp "$LOCAL_DIR" "$S3_DIR" --recursive
 # Check if the upload was successful
 if [ $? -eq 0 ]; then
   echo "Upload successful."
+
+  # Clean up files in each directory
+  find "$LOCAL_DIR" -type f -exec rm -f {} \;
+  echo "Files in $LOCAL_DIR have been removed."
 else
   echo "Upload failed."
   exit 1
