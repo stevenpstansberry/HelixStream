@@ -3,12 +3,13 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 import os
+import argparse
 
-NUM_SITES = 29903 # Total number of nucleotides in the original Wuhan COVID 2019 reference genome
+NUM_SITES = 29903  # Total number of nucleotides in the original Wuhan COVID 2019 reference genome
 
-def calculate_evolutionary_metrics():
+def calculate_evolutionary_metrics(variantName):
     # Define the path to the alignment file
-    alignment_file = os.path.join("..", "data", "aligned-sequences", "aligned.txt")
+    alignment_file = os.path.join("..", "data", "aligned-sequences", f"{variantName}-aligned.txt")
     
     # Print the absolute path for debugging
     print("Alignment file path:", os.path.abspath(alignment_file))
@@ -58,7 +59,6 @@ def calculate_evolutionary_metrics():
     df = pd.DataFrame(data).sort_values("Date").reset_index(drop=True) 
     return df
 
-
 def calculate_jukes_cantor_distance(df, total_sites):
     # Calculate the Jukes-Cantor distance for each sequence
     df['Jukes_Cantor_Distance'] = df['Substitutions'].apply(lambda x: jukes_cantor(x, total_sites))
@@ -80,20 +80,27 @@ def jukes_cantor(substitutions, total_sites):
     
     return d
 
-# Usage
-df = calculate_evolutionary_metrics()
-total_sites = NUM_SITES 
-df = calculate_jukes_cantor_distance(df, total_sites)
+if __name__ == "__main__":
+    # Set up argument parser
+    parser = argparse.ArgumentParser(description="Calculate evolutionary metrics for a given variant.")
+    parser.add_argument("variantName", type=str, help="Name of the variant (e.g., Omicron)")
 
+    # Parse arguments
+    args = parser.parse_args()
 
-# Display the DataFrame with the new Jukes-Cantor distance column
-pd.set_option('display.max_columns', None)
+    # Usage
+    df = calculate_evolutionary_metrics(args.variantName)
+    total_sites = NUM_SITES 
+    df = calculate_jukes_cantor_distance(df, total_sites)
 
-print("DataFrame with Jukes-Cantor distance:")
-print("-" * 100)
-print(df)
+    # Display the DataFrame with the new Jukes-Cantor distance column
+    pd.set_option('display.max_columns', None)
 
-# Print the DataFrame in JSON format
-print("DataFrame in JSON format:")
-print("-" * 100)
-print(df.to_json(orient='records', date_format='iso'))
+    print("DataFrame with Jukes-Cantor distance:")
+    print("-" * 100)
+    print(df)
+
+    # Print the DataFrame in JSON format
+    print("DataFrame in JSON format:")
+    print("-" * 100)
+    print(df.to_json(orient='records', date_format='iso'))
