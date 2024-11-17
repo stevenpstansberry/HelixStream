@@ -54,18 +54,7 @@ export default function Dashboard() {
     fetchData();
   }, [selectedVariant]);
 
-  const chartTheme =
-    theme === "dark"
-      ? {
-          backgroundColor: "transparent",
-          textColor: "#ffffff",
-          gridColor: "#333333",
-        }
-      : {
-          backgroundColor: "transparent",
-          textColor: "#000000",
-          gridColor: "#e5e5e5",
-        };
+
 
   const handleVariantChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selected = event.target.value;
