@@ -6,7 +6,7 @@ import sys
 
 Entrez.email = "stevenpstansberry@gmail.com"
 
-# Todo add logic to record when last fetched
+WUHAN_SEQ_ID = 'NC_045512.2'  # Reference sequence ID for the original Wuhan strain
 
 def fetch_variant_sequences(variant, retmax=50):
     # Map variant names to Pango lineage codes, can easily add more
@@ -104,7 +104,7 @@ def fetch_variant_sequences(variant, retmax=50):
             time.sleep(0.5)  # Be nice to the NCBI servers
 
 def fetch_wuhan_sequence():
-    seq_id = 'NC_045512.2'  # Reference sequence ID for the original Wuhan strain
+    seq_id = WUHAN_SEQ_ID  # Reference sequence ID for the original Wuhan strain
     try:
         # Fetch the sequence in GenBank format
         seq_handle = Entrez.efetch(db="nucleotide", id=seq_id, rettype="gb", retmode="text")
