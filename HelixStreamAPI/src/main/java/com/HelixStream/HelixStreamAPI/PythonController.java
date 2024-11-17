@@ -1,6 +1,7 @@
 package com.HelixStream.HelixStreamAPI;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.ResponseEntity;
@@ -13,24 +14,24 @@ import java.io.InputStreamReader;
 public class PythonController {
 
     @GetMapping("/fetch-data")
-    public ResponseEntity<String> fetchData() {
-        return executePythonScript("../../../../../../../../python/FetchData.py", "Fetch");
+    public ResponseEntity<String> fetchData(@RequestHeader("Variant-Name") String variantName) {
+        return executePythonScript("../../../../../../../../python/FetchData.py", "Fetch", variantName);
     }
 
     @GetMapping("/analyze-data")
-    public ResponseEntity<String> analyzeData() {
-        return executePythonScript("../../../../../../../../python/AnalyzeData.py", "Analyze");
+    public ResponseEntity<String> analyzeData(@RequestHeader("Variant-Name") String variantName) {
+        return executePythonScript("../../../../../../../../python/AnalyzeData.py", "Analyze", variantName);
     }
 
     @GetMapping("/parse-data")
-    public ResponseEntity<String> parseData() {
-        return executePythonScript("../../../../../../../../python/ParseData.py", "Parse");
+    public ResponseEntity<String> parseData(@RequestHeader("Variant-Name") String variantName) {
+        return executePythonScript("../../../../../../../../python/ParseData.py", "Parse", variantName);
     }
 
-    private ResponseEntity<String> executePythonScript(String scriptPath, String scriptName) {
+    private ResponseEntity<String> executePythonScript(String scriptPath, String scriptName, String variantName) {
         try {
-            // Define the command to execute the Python script
-            String[] command = {"python3", scriptPath};
+            // Define the command to execute the Python script with the variant name as an argument
+            String[] command = {"python3", scriptPath, variantName};
 
             // Create a ProcessBuilder to execute the command
             ProcessBuilder processBuilder = new ProcessBuilder(command);
