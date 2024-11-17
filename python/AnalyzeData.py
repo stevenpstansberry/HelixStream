@@ -80,31 +80,54 @@ def jukes_cantor(substitutions, total_sites):
     
     return d
 
+def analyze_all_variants():
+    aligned_dir = os.path.join("..", "data", "aligned-sequences")
+    for filename in os.listdir(aligned_dir):
+        if filename.endswith("-aligned.txt"):
+            variant_name = filename.replace("-aligned.txt", "")
+            print(f"Analyzing variant: {variant_name}")
+            df = calculate_evolutionary_metrics(variant_name)
+            total_sites = NUM_SITES 
+            df = calculate_jukes_cantor_distance(df, total_sites)
+
+            # Save the DataFrame in JSON format
+            output_dir = os.path.join("..", "data", "analyzed-sequences", variant_name)
+            os.makedirs(output_dir, exist_ok=True)
+            today_date = datetime.now().strftime("%Y-%m-%d")
+            output_file = os.path.join(output_dir, f"analyzed-{variant_name}-{today_date}.json")
+            df.to_json(output_file, orient='records', date_format='iso')
+
+            print(f"DataFrame for {variant_name} saved to {output_file}")
+
 if __name__ == "__main__":
     # Set up argument parser
     parser = argparse.ArgumentParser(description="Calculate evolutionary metrics for a given variant.")
-    parser.add_argument("variantName", type=str, help="Name of the variant (e.g., Omicron)")
+    parser.add_argument("variantName", type=str, nargs='?', help="Name of the variant (e.g., Omicron)")
 
     # Parse arguments
     args = parser.parse_args()
 
-    # Usage
-    df = calculate_evolutionary_metrics(args.variantName)
-    total_sites = NUM_SITES 
-    df = calculate_jukes_cantor_distance(df, total_sites)
+    if args.variantName:
+        # Analyze the specified variant
+        df = calculate_evolutionary_metrics(args.variantName)
+        total_sites = NUM_SITES 
+        df = calculate_jukes_cantor_distance(df, total_sites)
 
-    # Display the DataFrame with the new Jukes-Cantor distance column
-    pd.set_option('display.max_columns', None)
+        # Display the DataFrame with the new Jukes-Cantor distance column
+        pd.set_option('display.max_columns', None)
 
-    print("DataFrame with Jukes-Cantor distance:")
-    print("-" * 100)
-    print(df)
+        print("DataFrame with Jukes-Cantor distance:")
+        print("-" * 100)
+        print(df)
 
-    # Save the DataFrame in JSON format
-    output_dir = os.path.join("..", "data", "analyzed-sequences", args.variantName)
-    os.makedirs(output_dir, exist_ok=True)
-    today_date = datetime.now().strftime("%Y-%m-%d")
-    output_file = os.path.join(output_dir, f"analyzed-{args.variantName}-{today_date}.json")
-    df.to_json(output_file, orient='records', date_format='iso')
+        # Save the DataFrame in JSON format
+        output_dir = os.path.join("..", "data", "analyzed-sequences", args.variantName)
+        os.makedirs(output_dir, exist_ok=True)
+        today_date = datetime.now().strftime("%Y-%m-%d")
+        output_file = os.path.join(output_dir, f"analyzed-{args.variantName}-{today_date}.json")
+        df.to_json(output_file, orient='records', date_format='iso')
 
-    print(f"DataFrame saved to {output_file}")
+        print(f"DataFrame saved to {output_file}")
+    else:
+        # Analyze all variants
+        analyze_all_variants()

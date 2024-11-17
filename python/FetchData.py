@@ -2,11 +2,11 @@ from Bio import Entrez, SeqIO
 import os
 import time
 from datetime import datetime
-
+import sys
 
 Entrez.email = "stevenpstansberry@gmail.com"
 
-#Todo addd logic to record when last fetched
+# Todo add logic to record when last fetched
 
 def fetch_variant_sequences(variant, retmax=50):
     # Map variant names to Pango lineage codes, can easily add more
@@ -156,24 +156,23 @@ def fetch_wuhan_sequence():
     except Exception as e:
         print(f"Error fetching Wuhan sequence: {e}")
 
+if __name__ == "__main__":
+    # Check if a variant name is provided as a command-line argument
+    if len(sys.argv) > 1:
+        variant_name = sys.argv[1]
+        print(f"Fetching sequences for variant: {variant_name}")
+        fetch_variant_sequences(variant_name, retmax=50)
+    else:
+        # Fetch sequences for all variants
+        print("Fetching sequences for selected SARS-CoV-2 variants...")
+        print("-" * 50)
+        variants = ['Alpha', 'Beta', 'Gamma', 'Delta', 'Omicron']
 
-# Fetch sequences for specific variants
-print("Fetching sequences for selected SARS-CoV-2 variants...")
-print("-" * 50)
-# variants = ['Alpha', 'Beta', 'Gamma', 'Delta', 'Omicron']
-variants = ['Omicron']
+        for variant in variants:
+            print(f"\nVariant: {variant}")
+            fetch_variant_sequences(variant, retmax=5)
 
-
-for variant in variants:
-    print(f"\nVariant: {variant}")
-    fetch_variant_sequences(variant, retmax=5)
-
-print("\nFetching base Wuhan sequence")
-fetch_wuhan_sequence()
-print("-" * 50)
-print("Done fetching sequences.")
-
-
-
-
-
+        print("\nFetching base Wuhan sequence")
+        fetch_wuhan_sequence()
+        print("-" * 50)
+        print("Done fetching sequences.")
