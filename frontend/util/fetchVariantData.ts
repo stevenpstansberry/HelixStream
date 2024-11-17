@@ -9,10 +9,13 @@ AWS.config.update({
 const s3 = new AWS.S3();
 
 export async function fetchVariantData(variantName: string): Promise<any> {
-  const params = {
-    Bucket: 'bioinformantics-sequence-data',
-    Key: `${variantName.toLowerCase()}/${variantName.toLowerCase()}.json`,
-  };
+    const capitalizedVariantName = variantName.charAt(0).toUpperCase() + variantName.slice(1).toLowerCase();
+    const params = {
+      Bucket: 'bioinformantics-sequence-data',
+      Key: `${capitalizedVariantName}/${variantName.toLowerCase()}.json`,
+    };
+
+  console.log(`Fetching from S3 bucket: ${params.Bucket}, file key: ${params.Key}`);
 
   return new Promise((resolve, reject) => {
     s3.getObject(params, (err, data) => {
