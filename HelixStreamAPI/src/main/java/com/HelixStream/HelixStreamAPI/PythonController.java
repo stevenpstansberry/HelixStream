@@ -10,13 +10,27 @@ import java.io.InputStreamReader;
 
 @RestController
 @RequestMapping("/api")
-public class FetchController {
+public class PythonController {
 
     @GetMapping("/fetch-data")
     public ResponseEntity<String> fetchData() {
+        return executePythonScript("../../../../../../../../python/FetchData.py", "Fetch");
+    }
+
+    @GetMapping("/analyze-data")
+    public ResponseEntity<String> analyzeData() {
+        return executePythonScript("../../../../../../../../python/AnalyzeData.py", "Analyze");
+    }
+
+    @GetMapping("/parse-data")
+    public ResponseEntity<String> parseData() {
+        return executePythonScript("../../../../../../../../python/ParseData.py", "Parse");
+    }
+
+    private ResponseEntity<String> executePythonScript(String scriptPath, String scriptName) {
         try {
             // Define the command to execute the Python script
-            String[] command = {"python3", "../../../../../../../../python/FetchData.py"};
+            String[] command = {"python3", scriptPath};
 
             // Create a ProcessBuilder to execute the command
             ProcessBuilder processBuilder = new ProcessBuilder(command);
@@ -42,12 +56,12 @@ public class FetchController {
             // Wait for the process to complete
             int exitCode = process.waitFor();
             if (exitCode == 0) {
-                return ResponseEntity.ok("Fetch successful:\n" + output.toString());
+                return ResponseEntity.ok(scriptName + " successful:\n" + output.toString());
             } else {
-                return ResponseEntity.status(500).body("Fetch failed:\n" + errorOutput.toString());
+                return ResponseEntity.status(500).body(scriptName + " failed:\n" + errorOutput.toString());
             }
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Error executing script: " + e.getMessage());
+            return ResponseEntity.status(500).body("Error executing " + scriptName + " script: " + e.getMessage());
         }
     }
 }
