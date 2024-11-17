@@ -11,9 +11,9 @@ export function InfoCard() {
   useEffect(() => {
     // Configure AWS SDK
     AWS.config.update({
-      region: process.env.REACT_APP_AWS_REGION,
-      accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
-      secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACCESS_KEY,
+      region: process.env.NEXT_PUBLIC_AWS_REGION,
+      accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY,
     });
 
     const s3 = new AWS.S3();
@@ -22,6 +22,9 @@ export function InfoCard() {
       Key: 'lastupdated.json',
     };
 
+    console.log("Fetching lastupdated.json from S3 with the following parameters:");
+    console.log(params);
+
     // Fetch the lastupdated.json file from S3
     s3.getObject(params, (err, data) => {
       if (err) {
@@ -29,9 +32,15 @@ export function InfoCard() {
         return;
       }
 
+      console.log("Successfully fetched lastupdated.json from S3:");
+      console.log(data);
+
       if (data.Body) {
         const jsonData = JSON.parse(data.Body.toString('utf-8'));
+        console.log("Parsed JSON data:", jsonData);
+
         const lastUpdatedDate = new Date(jsonData.last_updated);
+        console.log("Last updated date:", lastUpdatedDate);
 
         // Format the date and time as a readable string
         const formattedDate = lastUpdatedDate.toLocaleString("en-US", {
@@ -42,6 +51,8 @@ export function InfoCard() {
           day: "numeric",
           year: "numeric",
         });
+
+        console.log("Formatted date:", formattedDate);
 
         // Set the formatted date and time in the state
         setLastUpdated(formattedDate);
