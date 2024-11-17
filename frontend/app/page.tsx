@@ -16,7 +16,7 @@ import { StatisticCard } from "@/components/StatisticCard";
 import { ChartTabs } from "@/components/ChartTabs";
 import { KeyInsights } from "@/components/KeyInsights";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { fetchVariantData } from "@/util/fetchVariantData"; // Import the fetch function
+import { fetchVariantData } from "@/util/fetchVariantData"; 
 
 export default function Dashboard() {
   const { theme } = useTheme();
