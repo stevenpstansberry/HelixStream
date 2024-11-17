@@ -86,22 +86,27 @@ def save_aggregated_sequences(variant, records):
 
     print(f"Aggregated sequences saved to {output_file}")
 
-def main(variant):
-    print(f"Starting analysis for variant: {variant}")
-    
-    wuhan_record = read_wuhan_sequence()
-    variant_sequences = read_variant_sequences(variant)
-
-    all_records = [wuhan_record] + [entry['record'] for entry in variant_sequences]
-
-    print("Sequences have been read and are ready for alignment in another file.")
-    save_aggregated_sequences(variant, all_records)
+def main(variant=None):
+    if variant:
+        print(f"Starting analysis for variant: {variant}")
+        wuhan_record = read_wuhan_sequence()
+        variant_sequences = read_variant_sequences(variant)
+        all_records = [wuhan_record] + [entry['record'] for entry in variant_sequences]
+        save_aggregated_sequences(variant, all_records)
+    else:
+        print("Starting analysis for all variants...")
+        wuhan_record = read_wuhan_sequence()
+        variants = ['Alpha', 'Beta', 'Gamma', 'Delta', 'Omicron']
+        for variant in variants:
+            variant_sequences = read_variant_sequences(variant)
+            all_records = [wuhan_record] + [entry['record'] for entry in variant_sequences]
+            save_aggregated_sequences(variant, all_records)
     return all_records
 
 if __name__ == "__main__":
     import sys
-    if len(sys.argv) != 2:
-        print("Usage: python ParseData.py <VariantName>")
-    else:
+    if len(sys.argv) > 1:
         variant_name = sys.argv[1]
         sequences = main(variant_name)
+    else:
+        sequences = main()
