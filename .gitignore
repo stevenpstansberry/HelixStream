@@ -9,3 +9,5 @@ python/__pycache__/*
 data/aggregated-sequences/*
 data/analyzed-sequences/*
 frontend/node_modules/*
+data/lastupdated.json
+frontend/.env
