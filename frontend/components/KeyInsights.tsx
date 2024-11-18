@@ -1,3 +1,9 @@
+/**
+ * @file KeyInsights.tsx
+ * @description This file contains the KeyInsights component which provides key insights based on the latest data.
+ * @module KeyInsights
+ */
+
 "use client";
 
 import { Card } from "@/components/ui/card";
@@ -18,6 +24,11 @@ type KeyInsightsProps = {
   data: DataType[];
 };
 
+/**
+ * KeyInsights component provides key insights based on the latest data.
+ * @param {KeyInsightsProps} props - The props for the KeyInsights component.
+ * @returns {JSX.Element} The rendered KeyInsights component.
+ */
 export function KeyInsights({ data }: KeyInsightsProps) {
   if (!data || data.length === 0) {
     return (
