@@ -1,3 +1,9 @@
+/**
+ * @file fetchVariantData.ts
+ * @description This file contains the function to fetch variant data from an AWS S3 bucket.
+ * @module fetchVariantData
+ */
+
 import AWS from 'aws-sdk';
 
 AWS.config.update({
@@ -8,12 +14,17 @@ AWS.config.update({
 
 const s3 = new AWS.S3();
 
+/**
+ * Fetches variant data from an AWS S3 bucket.
+ * @param {string} variantName - The name of the variant to fetch data for.
+ * @returns {Promise<any>} A promise that resolves to the variant data.
+ */
 export async function fetchVariantData(variantName: string): Promise<any> {
-    const capitalizedVariantName = variantName.charAt(0).toUpperCase() + variantName.slice(1).toLowerCase();
-    const params = {
-      Bucket: 'bioinformantics-sequence-data',
-      Key: `${capitalizedVariantName}/${variantName.toLowerCase()}.json`,
-    };
+  const capitalizedVariantName = variantName.charAt(0).toUpperCase() + variantName.slice(1).toLowerCase();
+  const params = {
+    Bucket: 'bioinformantics-sequence-data',
+    Key: `${capitalizedVariantName}/${variantName.toLowerCase()}.json`,
+  };
 
   console.log(`Fetching from S3 bucket: ${params.Bucket}, file key: ${params.Key}`);
 
