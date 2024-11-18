@@ -1,8 +1,18 @@
+/**
+ * @file Header.tsx
+ * @description This file contains the Header component which renders the header section of the dashboard.
+ * @module Header
+ */
+
 "use client";
 
 import { Dna } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 
+/**
+ * Header component renders the header section of the dashboard.
+ * @returns {JSX.Element} The rendered Header component.
+ */
 export function Header() {
   return (
     <div className="flex justify-between items-center mb-6">
