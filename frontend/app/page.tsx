@@ -1,3 +1,9 @@
+/**
+ * @file page.tsx
+ * @description This file contains the Dashboard component which renders the main dashboard page with various charts, statistics, and insights.
+ * @module Dashboard
+ */
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -18,6 +24,10 @@ import { KeyInsights } from "@/components/KeyInsights";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { fetchVariantData } from "@/util/fetchVariantData"; 
 
+/**
+ * Dashboard component renders the main dashboard page with various charts, statistics, and insights.
+ * @returns {JSX.Element} The rendered Dashboard component.
+ */
 export default function Dashboard() {
   const { theme } = useTheme();
   const [selectedVariant, setSelectedVariant] = useState("Omicron");
@@ -53,8 +63,6 @@ export default function Dashboard() {
 
     fetchData();
   }, [selectedVariant]);
-
-
 
   const handleVariantChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selected = event.target.value;

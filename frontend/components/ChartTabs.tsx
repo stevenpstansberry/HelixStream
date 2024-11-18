@@ -1,3 +1,10 @@
+/**
+ * @file ChartTabs.tsx
+ * @description This file contains the ChartTabs component which renders various charts using the Recharts library.
+ * The charts display sequence identity, mutation types, mutation density, and evolutionary distance.
+ * @module ChartTabs
+ */
+
 "use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -17,6 +24,11 @@ import { useTheme } from "next-themes";
 
 const COLORS = ['hsl(var(--chart-2))', 'hsl(var(--chart-3))', 'hsl(var(--chart-4))'];
 
+/**
+ * Formats a date string into a localized date string.
+ * @param {string} dateString - The date string to format.
+ * @returns {string} The formatted date string.
+ */
 const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString();
 };
@@ -39,6 +51,11 @@ type ChartTabsProps = {
   mutationTypeData: MutationDataType[];
 };
 
+/**
+ * ChartTabs component renders tabs with different charts for sequence analysis.
+ * @param {ChartTabsProps} props - The props for the ChartTabs component.
+ * @returns {JSX.Element} The rendered ChartTabs component.
+ */
 export function ChartTabs({ data, mutationTypeData }: ChartTabsProps) {
   const { theme } = useTheme();
   const chartTheme = theme === 'dark' ? {
@@ -50,7 +67,12 @@ export function ChartTabs({ data, mutationTypeData }: ChartTabsProps) {
     gridColor: '#e5e5e5'
   };
 
-  // Dynamically calculate Y-axis domains based on data
+  /**
+   * Dynamically calculates Y-axis domains based on data.
+   * @param {keyof DataType} dataKey - The key of the data to calculate the domain for.
+   * @param {number} [buffer=1] - The buffer to add to the min and max values.
+   * @returns {[number, number]} The calculated domain.
+   */
   const getYAxisDomain = (dataKey: keyof DataType, buffer: number = 1) => {
     const values = data.map((d) => Number(d[dataKey]));
     const min = Math.min(...values);
