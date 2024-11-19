@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Example Usage:
-# ./align.sh ../data/omicron-aggregated-sequences.fasta
-# ./align.sh ../data/omicron-aggregated-sequences.fasta ../data/aligned-sequences/custom-output.txt
+# ./align.sh ../data/aggregated-sequences/omicron-aggregated-sequences.fasta
+# ./align.sh ../data/aggregated-sequences/omicron-aggregated-sequences.fasta ../data/aligned-sequences/custom-output.txt
 
 # Check if the input file name is provided
 if [ -z "$1" ]; then

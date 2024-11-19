@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # Variables
-BUCKET_NAME="your-s3-bucket-name"
 LOCAL_DIR="../data/analyzed-sequences"
 S3_DIR="s3://bioinformantics-sequence-data"
 LAST_UPDATED_FILE="../data/lastupdated.json"

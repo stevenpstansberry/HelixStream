@@ -1,3 +1,23 @@
+"""
+This script fetches SARS-CoV-2 variant sequences from the NCBI Nucleotide database using the Entrez API.
+
+It allows fetching sequences for specified variants or all predefined variants.
+Sequences are saved in FASTA format with the collection date included in the header.
+
+Dependencies:
+    - Biopython
+
+Usage:
+    python FetchData.py [variantName]
+
+    If 'variantName' is provided, it fetches sequences for the specified variant.
+    Otherwise, it fetches sequences for all variants and the Wuhan reference sequence.
+
+Note:
+    Ensure that the `Entrez.email` variable is set to your email address before running the script.
+    This is required by NCBI to monitor usage.
+
+"""
 from Bio import Entrez, SeqIO
 import os
 import time
@@ -8,7 +28,19 @@ Entrez.email = "stevenpstansberry@gmail.com"
 
 WUHAN_SEQ_ID = 'NC_045512.2'  # Reference sequence ID for the original Wuhan strain
 
-def fetch_variant_sequences(variant, retmax=50):
+def fetch_variant_sequences(variant, retmax=5):
+    """
+    Fetch sequences for a specified SARS-CoV-2 variant from the NCBI Nucleotide database.
+
+    Parameters:
+        variant (str): Name of the variant to fetch sequences for (e.g., 'Alpha', 'Delta', 'Omicron').
+        retmax (int): Maximum number of sequences to fetch (default is 50).
+
+    The function maps the variant name to its Pango lineage code and constructs a search query.
+    It fetches the sequences, extracts the collection date, and saves them in FASTA format.
+
+    Sequences are saved in 'data/fasta-sequences/{variant}' directory relative to the script's parent directory.
+    """    
     # Map variant names to Pango lineage codes, can easily add more
     variant_lineage_mapping = {
         'Alpha': 'B.1.1.7',
@@ -70,6 +102,17 @@ def fetch_variant_sequences(variant, retmax=50):
 
             # Function to parse various date formats
             def parse_date(date_str):
+                """
+                Parse a date string into 'YYYY-MM-DD' format.
+
+                Tries multiple date formats to handle inconsistencies in data.
+
+                Parameters:
+                    date_str (str): The date string to parse.
+
+                Returns:
+                    str: Formatted date string in 'YYYY-MM-DD' format, or original string if parsing fails.
+                """    
                 for fmt in ("%d-%m-%Y", "%Y-%m-%d", "%d-%b-%Y", "%Y-%m"):  # Try multiple formats
                     try:
                         return datetime.strptime(date_str, fmt).strftime("%Y-%m-%d")
@@ -104,6 +147,14 @@ def fetch_variant_sequences(variant, retmax=50):
             time.sleep(0.5)  # Be nice to the NCBI servers
 
 def fetch_wuhan_sequence():
+    """
+    Fetch the reference sequence for the original Wuhan strain.
+
+    The function fetches the Wuhan reference sequence, extracts the collection date (if available),
+    and saves it in FASTA format.
+
+    Sequence is saved in 'data/fasta-sequences/Wuhan' directory relative to the script's parent directory.
+    """
     seq_id = WUHAN_SEQ_ID  # Reference sequence ID for the original Wuhan strain
     try:
         # Fetch the sequence in GenBank format
@@ -157,14 +208,23 @@ def fetch_wuhan_sequence():
         print(f"Error fetching Wuhan sequence: {e}")
 
 if __name__ == "__main__":
+    """
+    Main execution block.
+
+    Checks if a variant name is provided as a command-line argument.
+    If provided, it fetches sequences for that variant.
+    Otherwise, it fetches sequences for a predefined list of variants and the Wuhan reference sequence.
+    """
     # Check if a variant name is provided as a command-line argument
     if len(sys.argv) > 1:
         variant_name = sys.argv[1]
-        print(f"Fetching sequences for variant: {variant_name}")
-        fetch_variant_sequences(variant_name, retmax=50)
+        print(f"Fetching sequences for variant: {variant_name}\n")
+        print("This may take a moment, please be patient\n")
+        print("-" * 50)
+        fetch_variant_sequences(variant_name, retmax=5)
     else:
         # Fetch sequences for all variants
-        print("Fetching sequences for selected SARS-CoV-2 variants...")
+        print("Fetching sequences for selected SARS-CoV-2 variants...\n")
         print("-" * 50)
         variants = ['Alpha', 'Beta', 'Gamma', 'Delta', 'Omicron']
 
@@ -172,7 +232,7 @@ if __name__ == "__main__":
             print(f"\nVariant: {variant}")
             fetch_variant_sequences(variant, retmax=5)
 
-        print("\nFetching base Wuhan sequence")
-        fetch_wuhan_sequence()
-        print("-" * 50)
-        print("Done fetching sequences.")
+    print("\nFetching base Wuhan sequence")
+    fetch_wuhan_sequence()
+    print("-" * 50)
+    print("Done fetching sequences.")
