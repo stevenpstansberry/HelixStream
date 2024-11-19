@@ -218,11 +218,13 @@ if __name__ == "__main__":
     # Check if a variant name is provided as a command-line argument
     if len(sys.argv) > 1:
         variant_name = sys.argv[1]
-        print(f"Fetching sequences for variant: {variant_name}")
+        print(f"Fetching sequences for variant: {variant_name}\n")
+        print("This may take a moment, please be patient\n")
+        print("-" * 50)
         fetch_variant_sequences(variant_name, retmax=5)
     else:
         # Fetch sequences for all variants
-        print("Fetching sequences for selected SARS-CoV-2 variants...")
+        print("Fetching sequences for selected SARS-CoV-2 variants...\n")
         print("-" * 50)
         variants = ['Alpha', 'Beta', 'Gamma', 'Delta', 'Omicron']
 
@@ -230,7 +232,7 @@ if __name__ == "__main__":
             print(f"\nVariant: {variant}")
             fetch_variant_sequences(variant, retmax=5)
 
-        print("\nFetching base Wuhan sequence")
-        fetch_wuhan_sequence()
-        print("-" * 50)
-        print("Done fetching sequences.")
+    print("\nFetching base Wuhan sequence")
+    fetch_wuhan_sequence()
+    print("-" * 50)
+    print("Done fetching sequences.")
