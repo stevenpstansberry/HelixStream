@@ -28,7 +28,7 @@ Entrez.email = "stevenpstansberry@gmail.com"
 
 WUHAN_SEQ_ID = 'NC_045512.2'  # Reference sequence ID for the original Wuhan strain
 
-def fetch_variant_sequences(variant, retmax=50):
+def fetch_variant_sequences(variant, retmax=5):
     """
     Fetch sequences for a specified SARS-CoV-2 variant from the NCBI Nucleotide database.
 
@@ -219,7 +219,7 @@ if __name__ == "__main__":
     if len(sys.argv) > 1:
         variant_name = sys.argv[1]
         print(f"Fetching sequences for variant: {variant_name}")
-        fetch_variant_sequences(variant_name, retmax=50)
+        fetch_variant_sequences(variant_name, retmax=5)
     else:
         # Fetch sequences for all variants
         print("Fetching sequences for selected SARS-CoV-2 variants...")
