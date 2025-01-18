@@ -2,14 +2,75 @@
 
 ## Overview
 
-Welcome to **HelixStream**! HelixStream is a bioinformatics pipeline designed to analyze genetic mutations and evolutionary patterns in viral genomes, with a particular focus on SARS-CoV-2 variants such as Omicron. Built to be flexible and extensible, HelixStream can easily adapt to other bioinformatics use cases. By leveraging modern technologies across cloud infrastructure, data processing, and interactive visualization, HelixStream offers a comprehensive solution for tracking, analyzing, and visualizing genetic sequence data. Whether you’re a researcher or a data enthusiast, HelixStream empowers you to observe viral evolution trends, track mutation rates, and compare genetic distances across different variants in real-time.
+Welcome to **HelixStream**! HelixStream is a scalable bioinformatics pipeline for analyzing genetic mutations and evolutionary patterns in viral genomes, including SARS-CoV-2 variants like Omicron. It leverages AWS S3 for scalable storage, IAM roles for secure access control, and EC2 instances for automated data ingestion and processing. The pipeline aligns sequences and computes mutation metrics using Python, Biopython, and Clustal Omega, while the Spring Boot API orchestrates data processing. A frontend display of the data is provided [here](https://www.helixstream-demo.com/).
 
 ## Table of Contents
 
+- [Pipeline Architecture](#pipeline-architecture)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
-- [Setup and Installation](#setup-and-installation)
 - [Future Improvements](#future-improvements)
+
+
+## Pipeline Architecture
+
+<p align="center">
+  <img src="./images/helixstream-pipeline.png" alt="HelixStream Pipeline" width="100%">
+</p>
+
+### Key Components of the HelixStream Pipeline:
+1. **Data Source: NCBI Database**  
+   - Source of raw viral genome sequences.  
+   - Sequences are fetched programmatically using bash scripts on AWS EC2.
+
+2. **Ingestion Layer: EC2 Instance**  
+   - Automates data fetching and uploads raw genome data to AWS S3.  
+   - Processes are triggered via a manual Spring Boot API call or scheduled cron jobs.  
+   - The EC2 instance assumes an IAM role with minimal permissions, granting it access to fetch data and upload results securely to S3.
+
+3. **Storage Layer: AWS S3**  
+   - Scalable storage for raw genome data and processed results.  
+   - Organized using prefixes for efficient data management.  
+   -  Bucket policies and IAM roles enforce strict access control, ensuring only authorized services (like EC2 or the API) can access the data. Server-side encryption (SSE) protects data at rest.
+
+4. **Processing Layer**  
+   - Python scripts (with Biopython) and Clustal Omega perform sequence alignment and calculate mutation metrics.  
+   - Scripts running on the EC2 instance leverage the instance's IAM role to access raw data from S3 and upload processed results back to the bucket.
+
+5. **API Layer: Spring Boot**  
+   - Facilitates interaction with the EC2 instance to trigger ingestion and processing tasks.  
+   - Provides endpoints for securely retrieving processed data from S3.  
+   - The API assumes an IAM role to securely interact with S3 buckets and EC2 instances.
+
+6. **Visualization Layer: React Dashboard**  
+   - Displays mutation metrics and evolutionary trends.  
+   - API endpoints use secure authorization mechanisms token-based access to ensure proper authentication before data is retrieved.
+
+---
+
+### Data Flow:
+1. Genome sequences are fetched from the **NCBI database** using Linux scripts running on an AWS EC2 instance.
+   -  The EC2 instance assumes a role to securely fetch data from NCBI and upload it to S3.
+2. The sequences are uploaded as raw data to an **AWS S3 bucket**.
+   -  Bucket policies restrict access to specific roles and services.
+3. **Python scripts** align the sequences, calculate mutation metrics, and clean the data.
+   - : Secure access ensures only authorized EC2 processes interact with S3 buckets.
+4. The processed data is stored back in **AWS S3** for scalable storage.
+5. Data is made viewable via the React dashboard, which retrieves it using API calls to the **Spring Boot backend**.
+   - API calls securely fetch data, ensuring proper access control and encryption.
+
+---
+
+### Scalability and Security:
+- **Scalability**:  
+   - AWS S3 dynamically scales with data volume, while EC2 instances can be horizontally scaled.  
+
+- **Security**:  
+   - **IAM Roles**:  
+     - The EC2 instance assumes an IAM role with limited permissions to interact with S3.  
+     - The Spring Boot API uses IAM credentials to securely manage data access.  
+   - **Bucket Policies**: Enforce least privilege access for S3 storage.  
+   - **Encryption**: Server-side encryption (SSE) protects data at rest, and HTTPS ensures secure data transfer.  
 
 ## Features
 
@@ -60,32 +121,6 @@ HelixStream includes a **React** frontend for real-time visualization of key met
 - **AWS EC2**: Runs bash scripts to fetch data, execute processing jobs, and upload results to S3.
 
 
-## Setup and Installation
-
-### Prerequisites
-
-- **AWS Account** with IAM privileges for EC2, S3
-- **React** installed on your machine.
-- **AWS CLI** to configure credentials.
-
-### Clone the Repository
-
-```bash
-git clone https://github.com/stevenpstansberry/HelixStream.git
-cd HelixStream/Frontend
-npm install
-```
-
-Run the Application
-Start the React development server:
-
-```bash
-npm start
-This will run the app locally at http://localhost:3000 by default.
-```
-
-Run Backend Services
-Deploy the Spring Boot backend to handle API requests and EC2 scripts for data ingestion and processing.
 
 ## Future Improvements
 
