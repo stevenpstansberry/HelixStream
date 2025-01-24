@@ -166,7 +166,7 @@ export function ChartTabs({ data, mutationTypeData }: ChartTabsProps) {
                 </TooltipContent>
               </UITooltip>
             </div>
-            <div className="h-[400px]">
+            <div className="h-[500px]">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={data}>
                   <CartesianGrid strokeDasharray="3 3" stroke={chartTheme.gridColor} />
@@ -213,7 +213,7 @@ export function ChartTabs({ data, mutationTypeData }: ChartTabsProps) {
                 </TooltipContent>
               </UITooltip>
             </div>
-            <div className="h-[400px]">
+            <div className="h-[500px]">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -254,7 +254,7 @@ export function ChartTabs({ data, mutationTypeData }: ChartTabsProps) {
               </TooltipContent>
             </UITooltip>
           </div>
-          <div className="h-[400px]">
+          <div className="h-[500px]">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={data}>
                 <CartesianGrid strokeDasharray="3 3" stroke={chartTheme.gridColor} />
