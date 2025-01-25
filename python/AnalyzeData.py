@@ -21,6 +21,7 @@ import numpy as np
 from datetime import datetime
 import os
 import argparse
+from log import log
 
 NUM_SITES = 29903  # Total number of nucleotides in the original Wuhan COVID 2019 reference genome
 

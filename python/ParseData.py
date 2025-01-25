@@ -20,8 +20,13 @@ Note:
     Ensure that the required directories and files are correctly set up before running the script.
 """
 import os
+import sys
 from datetime import datetime
 from Bio import SeqIO
+from log import log
+
+
+
 
 def read_wuhan_sequence():
     """
@@ -36,17 +41,17 @@ def read_wuhan_sequence():
     Raises:
         FileNotFoundError: If the Wuhan sequence file is not found in the directory.
     """    
-    print("Reading Wuhan reference sequence...")
+    log("Reading Wuhan reference sequence...")
     wuhan_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'fasta-sequences', 'Wuhan')
     for filename in os.listdir(wuhan_dir):
         if filename.endswith('.fasta'):
             wuhan_path = os.path.join(wuhan_dir, filename)
-            print(f"Found Wuhan sequence file: {filename}")
+            log(f"Found Wuhan sequence file: {filename}")
             wuhan_record = SeqIO.read(wuhan_path, 'fasta')
             # Extract custom_id and assign to record.id
             wuhan_record.id = "Severe/acute/respiratory/syndrome/coronavirus/2/isolate/Wuhan/Hu/1,/complete/genome"
             wuhan_record.description = "Severe/acute/respiratory/syndrome/coronavirus/2/isolate/Wuhan/Hu/1,/complete/genome| Date: 2019-12-29"
-            print(f"Wuhan sequence ID: {wuhan_record.id}")
+            log(f"Wuhan sequence ID: {wuhan_record.id}")
             return wuhan_record
     raise FileNotFoundError("Wuhan sequence not found in directory.")
 
@@ -63,16 +68,19 @@ def read_variant_sequences(variant):
     Returns:
         list: A list of dictionaries containing sequence records and their collection dates.
     """    
-    print(f"Reading sequences for variant: {variant}")
+    log(f"Reading sequences for variant: {variant}")
     variant_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'fasta-sequences', variant)
     fasta_files = [filename for filename in os.listdir(variant_dir) if filename.endswith('.fasta')]
     total_sequences = len(fasta_files)
-    print(f"{total_sequences} sequences found for {variant}.")
+    log(f"{total_sequences} sequences found for {variant}.")
 
     variant_sequences = []
 
+    start_time = datetime.now()
+
+
     for idx, filename in enumerate(fasta_files, start=1):
-        print(f"Reading sequence {idx}/{total_sequences}: {filename}")
+        log(f"Processing sequence {idx}/{total_sequences} ({(idx/total_sequences)*100:.1f}%): {filename}")
         file_path = os.path.join(variant_dir, filename)
         try:
             record = SeqIO.read(file_path, 'fasta')
@@ -87,13 +95,13 @@ def read_variant_sequences(variant):
                         'date': collection_date,
                     })
         except ValueError:
-            print(f"Warning: No valid sequence found in file {filename}. Skipping.")
+            log(f"No valid sequence found in file {filename}. Skipping.", level="WARNING")
         except Exception as e:
-            print(f"Error reading file {filename}: {e}")
+            log(f"Error reading file {filename}: {e}", level="ERROR")
 
     # Order sequences chronologically
-    variant_sequences.sort(key=lambda x: x['date'])
-    print(f"Finished reading {len(variant_sequences)} sequences for {variant}.\n")
+    elapsed_time = (datetime.now() - start_time).total_seconds()
+    log(f"Finished reading {len(variant_sequences)} sequences for {variant}. Time taken: {elapsed_time:.2f} seconds.")
     return variant_sequences
 
 def extract_date_from_header(header):
@@ -158,7 +166,8 @@ def save_aggregated_sequences(variant, records):
     Parameters:
         variant (str): The name of the variant being processed.
         records (list): A list of SeqRecord objects to save.
-    """    
+    """
+    log(f"Saving aggregated sequences for {variant}...")
     output_dir = os.path.join(os.path.dirname(__file__), '..', 'data', 'aggregated-sequences')
     os.makedirs(output_dir, exist_ok=True)
     output_file = os.path.join(output_dir, f"{variant}-aggregated-sequences.fasta")
@@ -170,7 +179,7 @@ def save_aggregated_sequences(variant, records):
             f.write(f">{record_id}###{date_str}\n")
             f.write(f"{record.seq}\n")
 
-    print(f"Aggregated sequences saved to {output_file}")
+    log(f"Aggregated sequences saved to {output_file}.")
 
 def main(variant=None):
     """
@@ -184,14 +193,15 @@ def main(variant=None):
     Returns:
         list: A list of all SeqRecord objects processed.
     """    
+    log("Script execution started.")
     if variant:
-        print(f"Starting analysis for variant: {variant}")
+        log(f"Starting analysis for variant: {variant}")
         wuhan_record = read_wuhan_sequence()
         variant_sequences = read_variant_sequences(variant)
         all_records = [wuhan_record] + [entry['record'] for entry in variant_sequences]
         save_aggregated_sequences(variant, all_records)
     else:
-        print("Starting analysis for all variants...")
+        log("Starting analysis for all variants...")
         wuhan_record = read_wuhan_sequence()
         variants = ['Alpha', 'Beta', 'Gamma', 'Delta', 'Omicron']
         for variant in variants:

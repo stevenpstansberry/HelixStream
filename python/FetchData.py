@@ -23,8 +23,10 @@ import os
 import time
 from datetime import datetime
 import sys
+from log import log
 
-Entrez.email = "stevenpstansberry@gmail.com"
+# fill this in with your own email
+Entrez.email = ""
 
 WUHAN_SEQ_ID = 'NC_045512.2'  # Reference sequence ID for the original Wuhan strain
 
@@ -41,6 +43,8 @@ def fetch_variant_sequences(variant, retmax=5):
 
     Sequences are saved in 'data/fasta-sequences/{variant}' directory relative to the script's parent directory.
     """    
+    log(f"Starting fetch for variant: {variant}")
+
     # Map variant names to Pango lineage codes, can easily add more
     variant_lineage_mapping = {
         'Alpha': 'B.1.1.7',
@@ -64,7 +68,7 @@ def fetch_variant_sequences(variant, retmax=5):
     record = Entrez.read(handle)
     ids = record["IdList"]
 
-    print(f"Fetching {len(ids)} sequences for variant '{variant}'...")
+    log(f"Found {len(ids)} sequences for variant '{variant}'.")
 
     # Set up output directory one level above the script directory
     script_dir = os.path.dirname(os.path.abspath(__file__))
