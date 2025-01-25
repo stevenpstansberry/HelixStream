@@ -4,12 +4,16 @@
 
 Welcome to **HelixStream**! HelixStream is a scalable bioinformatics pipeline for analyzing genetic mutations and evolutionary patterns in viral genomes, including SARS-CoV-2 variants like Omicron. It leverages AWS S3 for scalable storage, IAM roles for secure access control, and EC2 instances for automated data ingestion and processing. The pipeline aligns sequences and computes mutation metrics using Python, Biopython, and Clustal Omega, while the Spring Boot API orchestrates data processing. A frontend display of the data is provided [here](https://www.helixstream-demo.com/).
 
-## Table of Contents
+## Core Technology Stack
+![AWS S3](https://img.shields.io/badge/AWS_S3-569A31?style=flat&logo=amazonaws&logoColor=white)
+![AWS EC2](https://img.shields.io/badge/AWS_EC2-FF9900?style=flat&logo=amazonaws&logoColor=white)
+![IAM](https://img.shields.io/badge/AWS_IAM-232F3E?style=flat&logo=amazonaws&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white)
+![Biopython](https://img.shields.io/badge/Biopython-0096D6?style=flat&logo=python&logoColor=white)
+![Linux](https://img.shields.io/badge/Linux-FCC624?style=flat&logo=linux&logoColor=black)
+![Bash](https://img.shields.io/badge/Bash-4EAA25?style=flat&logo=gnubash&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=flat&logo=springboot&logoColor=white)
 
-- [Pipeline Architecture](#pipeline-architecture)
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Future Improvements](#future-improvements)
 
 
 ## Pipeline Architecture
@@ -17,6 +21,14 @@ Welcome to **HelixStream**! HelixStream is a scalable bioinformatics pipeline fo
 <p align="center">
   <img src="./images/helixstream-pipeline.png" alt="HelixStream Pipeline" width="100%">
 </p>
+
+[Click here to view the full-sized diagram](./images/helixstream-pipeline.png)
+
+## Table of Contents
+
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Future Improvements](#future-improvements)
 
 ### Key Components of the HelixStream Pipeline:
 1. **Data Source: NCBI Database**  
@@ -132,7 +144,4 @@ HelixStream includes a **React** frontend for real-time visualization of key met
 
 - **Public Dashboard Access**: Enhance Grafana settings or use a self-hosted solution for sharing dashboards publicly.
 
----
-
-**HelixStream** represents a powerful, extensible pipeline for bioinformatics research and analytics, making it adaptable for any project requiring sequence alignment, evolutionary distance metrics, or multi-variant comparison. Its design allows for future expansion, making it a robust tool for tracking viral evolution or applying to other bioinformatics domains.
 
